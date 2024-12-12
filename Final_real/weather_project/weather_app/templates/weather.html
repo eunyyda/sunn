@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Weather{% endblock %}
+
+{% block content %}
+<h2>{{ location }}의 날씨 정보</h2>
+<p style="font-size: 0.9em; color: gray;">최근 업데이트: {{ updated_datetime }}</p>
+
+<!-- 날씨 데이터 -->
+{% if weather_data %}
+<ul>
+    {% for item in weather_data %}
+    <li>{{ item.category }}: {{ item.value }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>현재 날씨 정보를 불러올 수 없습니다. API 설정을 확인하세요.</p>
+{% endif %}
+
+<!-- 지도 -->
+<h3>현재 위치</h3>
+<div id="map" style="width: 100%; height: 400px;"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBV9xHdsunjLlXR6M4DtlAjJ-8k6AOwD2k"></script>
+<script>
+    function initMap() {
+        // 위치 데이터
+        const location = { lat: {{ latitude }}, lng: {{ longitude }} };
+
+        // 지도 생성
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 15,
+            center: location,
+        });
+
+        // 마커 추가
+        new google.maps.Marker({
+            position: location,
+            map: map,
+            title: "{{ location }}"
+        });
+    }
+
+    // 페이지 로드 시 지도 초기화
+    window.onload = initMap;
+</script>
+{% endblock %}
